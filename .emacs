@@ -20,20 +20,40 @@
 ;;读取或写入文件名的编码方式
 (setq file-name-coding-system 'utf-8) 
 
+;;设置Emacs在空闲下来的时候就自动进行垃圾收集
+(defvar k-gc-timer
+  (run-with-idle-timer 15 t
+                       'garbage-collect))
+
+;;设置通过记录每次垃圾收集的时间来进行判断和调整
+(defmacro k-time (&rest body)
+  "Measure and return the time it takes evaluating BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (float-time (time-since time))))
+
+(defvar k-gc-timer
+  (run-with-idle-timer 15 t
+                       (lambda ()
+                         (message "Garbage Collector has run for %.06fsec"
+                                  (k-time (garbage-collect))))))
 
 
 
 
 
-;;设置emacs启动窗口大小
-(setq default-frame-alist 
-'((height . 32) (width , 50) (menu-bar-lines . 20) (tool-bar-lines . 0))) 
 
 ;;=======================插件源设置====================
 (require 'package)
 (setq package-enable-at-startup nil)
-(setq package-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-                         ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+(setq package-archives '(
+("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/") 
+   
+                         ("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+   
+                         ("org"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")))
+
+
 (package-initialize)
 
 
@@ -42,8 +62,9 @@
 
 
 
-;;=======================配置加载插件方式=======================
 
+
+;;=======================配置加载插件方式=======================
 
 
 
@@ -74,8 +95,28 @@
 ;;语法高亮
 (global-font-lock-mode t) 
 
-;;去掉菜单栏，将F10绑定为显示菜单栏，需要菜单栏了可以摁F10调出，再摁F10就去掉菜单
-(menu-bar-mode nil)
+; 关闭菜单栏和工具栏
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+
+;;关掉启动界面
+(setq inhibit-startup-screen t)
+
+;;设置emacs启动窗口大小(数据自己调整，注意格式，如(top . 0)，圆点前后都要留有空格)
+(setq initial-frame-alist '((top . 0) (left . 0) (width . 142) (height . 49)))
+
+
+;;设置Mode Line主题
+(use-package smart-mode-line 
+    
+:init 
+    
+(setq sml/no-confirm-load-theme t) 
+    
+(setq sml/theme 'respectful) 
+    
+(sml/setup))
+
 
 
 
