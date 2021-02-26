@@ -57,16 +57,13 @@
 (package-initialize)
 
 
-
-
-
-
-
-
-
 ;;=======================配置加载插件方式=======================
+;;激活evil插件，使启动emacs时开启evil
+(require 'evil)
+(evil-mode t)
 
-
+; 开启全局 Company 补全
+(global-company-mode 1)
 
 
 
@@ -79,10 +76,14 @@
 
 ;;=======================显示设置======================
 ;;设置背景颜色
-(set-background-color "black")
+(set-background-color "#002B2B")
 ;;设置字体颜色
-(set-foreground-color "white")
+(set-foreground-color "#FFFFFF")
+;;设置区域背景色
+(set-face-background 'region "blue")
 
+;;设置主题
+(load-theme 'monokai t)
 
 ;;显示行号
 (global-linum-mode 1)        ;; 总是显示行号
@@ -101,6 +102,9 @@
 
 ;;关掉启动界面
 (setq inhibit-startup-screen t)
+
+;;设置启动时窗口最大化
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;;设置emacs启动窗口大小(数据自己调整，注意格式，如(top . 0)，圆点前后都要留有空格)
 (setq initial-frame-alist '((top . 0) (left . 0) (width . 142) (height . 49)))
